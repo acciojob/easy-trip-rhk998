@@ -4,6 +4,9 @@ public class Passenger {
 
     private int passengerId; //This is a unique key for Passenger model :
 
+    private int ticketId;
+
+    private int ticktsBooked;
     private String email;
 
     private String name;
@@ -14,8 +17,10 @@ public class Passenger {
 
     }
 
-    public Passenger(int passengerId, String email, String name, int age) {
+    public Passenger(int passengerId,int ticketId, int ticktsBooked, String email, String name, int age) {
         this.passengerId = passengerId;
+        this.ticketId = ticketId;
+        this.ticktsBooked = ticktsBooked;
         this.email = email;
         this.name = name;
         this.age = age;
@@ -27,6 +32,22 @@ public class Passenger {
 
     public void setPassengerId(int passengerId) {
         this.passengerId = passengerId;
+    }
+
+    public int getTicketId() {
+        return ticketId;
+    }
+
+    public void setTicketId(int ticketId) {
+        this.ticketId = ticketId;
+    }
+
+    public int getTicktsBooked() {
+        return ticktsBooked;
+    }
+
+    public void setTicktsBooked(int ticktsBooked) {
+        this.ticktsBooked = ticktsBooked;
     }
 
     public String getEmail() {

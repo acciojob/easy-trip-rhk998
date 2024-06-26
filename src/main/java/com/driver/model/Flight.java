@@ -1,6 +1,6 @@
 package com.driver.model;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public class Flight {
 
@@ -12,21 +12,42 @@ public class Flight {
 
     private int maxCapacity;
 
-    private Date flightDate;
+    private LocalDate flightDate;
 
     private double duration;
+    private int ticketsBooked;
+
+    private int ticketId;
 
     public Flight() {
 
     }
 
-    public Flight(int flightId, City fromCity, City toCity, int maxCapacity, Date flightDate, double duration) {
+    public Flight(int flightId, City fromCity, City toCity, int maxCapacity, int ticketsBooked, int ticketId, LocalDate flightDate, double duration) {
         this.flightId = flightId;
         this.fromCity = fromCity;
         this.toCity = toCity;
         this.maxCapacity = maxCapacity;
+        this.ticketsBooked = ticketsBooked;
+        this.ticketId = ticketId;
         this.flightDate = flightDate;
         this.duration = duration;
+    }
+
+    public int getTicketsBooked() {
+        return ticketsBooked;
+    }
+
+    public void setTicketsBooked(int ticketsBooked) {
+        this.ticketsBooked = ticketsBooked;
+    }
+
+    public int getTicketId() {
+        return ticketId;
+    }
+
+    public void setTicketId(int ticketId) {
+        this.ticketId = ticketId;
     }
 
     public int getFlightId() {
@@ -61,11 +82,11 @@ public class Flight {
         this.maxCapacity = maxCapacity;
     }
 
-    public Date getFlightDate() {
+    public LocalDate getFlightDate() {
         return flightDate;
     }
 
-    public void setFlightDate(Date flightDate) {
+    public void setFlightDate(LocalDate flightDate) {
         this.flightDate = flightDate;
     }
 
