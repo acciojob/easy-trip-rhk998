@@ -3,16 +3,9 @@ package com.driver.model;
 public class Passenger {
 
     private int passengerId; //This is a unique key for Passenger model :
-
-    private int ticketId;
-
-    private int ticktsBooked;
     private String email;
-
     private String name;
-
     private int age;
-
     public Passenger(){
 
     }
@@ -30,22 +23,6 @@ public class Passenger {
 
     public void setPassengerId(int passengerId) {
         this.passengerId = passengerId;
-    }
-
-    public int getTicketId() {
-        return ticketId;
-    }
-
-    public void setTicketId(int ticketId) {
-        this.ticketId = ticketId;
-    }
-
-    public int getTicktsBooked() {
-        return ticktsBooked;
-    }
-
-    public void setTicktsBooked(int ticktsBooked) {
-        this.ticktsBooked = ticktsBooked;
     }
 
     public String getEmail() {

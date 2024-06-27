@@ -60,19 +60,6 @@ public class AirportController {
         return pssngrs;
     }
 
-//@GetMapping("/get-number-of-people-on-airport-on/{date}")
-//public int getNumberOfPeopleOn(
-//        @PathVariable("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime date,
-//        @RequestParam("airportName") String airportName) {
-//
-//    // Log received parameters for debugging
-////    System.out.println("Received date: " + date);
-////    System.out.println("Received airport name: " + airportName);
-//
-//    // Call to the service layer
-//    int pssngrs = servicesLayer.getNumberOfPeopleOn(date, airportName);
-//    return pssngrs;
-//}
 
     @GetMapping("/calculate-fare")
     public int calculateFlightFare(@RequestParam("flightId")Integer flightId){

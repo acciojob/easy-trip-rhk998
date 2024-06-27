@@ -15,9 +15,6 @@ public class Flight {
     private Date flightDate;
 
     private double duration;
-    private int ticketsBooked;
-
-    private int ticketId;
 
     public Flight() {
 
@@ -32,21 +29,9 @@ public class Flight {
         this.duration = duration;
     }
 
-    public int getTicketsBooked() {
-        return ticketsBooked;
-    }
 
-    public void setTicketsBooked(int ticketsBooked) {
-        this.ticketsBooked = ticketsBooked;
-    }
 
-    public int getTicketId() {
-        return ticketId;
-    }
 
-    public void setTicketId(int ticketId) {
-        this.ticketId = ticketId;
-    }
 
     public int getFlightId() {
         return flightId;

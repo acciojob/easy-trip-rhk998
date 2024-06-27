@@ -34,28 +34,18 @@ public class ServicesLayer {
     }
 
     public String getPort(){
-
         List<Airport> Airportlist = repo.getAllPorts();
-        int max = Integer.MIN_VALUE;
-        int max2 = 0;
-        String largestPort="" ;
-        String prevPort="";
-        for(Airport airport : Airportlist){
-            if(airport.getNoOfTerminals() > max){
-                max2 = max;
-                prevPort = largestPort;
-                max = airport.getNoOfTerminals();
-                largestPort = airport.getAirportName();
-            }
-            if(max2 == max){
-                if(largestPort.compareTo(prevPort)<=0){
-                    return largestPort;
-                }else{
-                    return prevPort;
-                }
+        Airport largestAirport = null;
+
+        for (Airport airport : airports) {
+            if (largestAirport == null ||
+                    airport.getNoOfTerminals() > largestAirport.getNoOfTerminals() ||
+                    (airport.getNoOfTerminals() == largestAirport.getNoOfTerminals() && airport.getAirportName().compareTo(largestAirport.getAirportName()) < 0)) {
+                largestAirport = airport;
             }
         }
-        return largestPort;
+
+        return largestAirport != null ? largestAirport.getAirportName() : "No airports available";
 
     }
     public String getTakeOffCity(int flightId){
@@ -105,15 +95,7 @@ public class ServicesLayer {
 
         for(Flight flight : flights){
             if( flight.getFromCity() == city || flight.getToCity() == city ){
-//                if (date.equals(flight.getFlightDate())) {
-//                    System.out.println("Matched Date");
-//                    passngrs += flight.getTicketsBooked();
-//                }
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-                String inputDateString = formatter.format(date);
-                String flightDateString = formatter.format(flight.getFlightDate());
-
-                if (inputDateString.equals(flightDateString)) {
+                if (date.equals(flight.getFlightDate())) {
                     System.out.println("Matched Date");
                     passngrs += flight.getTicketsBooked();
                 }
@@ -123,7 +105,7 @@ public class ServicesLayer {
     }
     public int calculateFlightFare(int flightId){
         List<Flight> flights = repo.getAllFlights();
-//        3000 + noOfPeopleWhoHaveAlreadyBooked*50
+
         int presntFair = 0;
         int filledseats = 0;
         for(Flight flight : flights){
