@@ -7,10 +7,11 @@ import com.driver.model.Flight;
 import com.driver.model.Passenger;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.time.LocalDateTime;
-import java.time.LocalDate;
+import java.util.Date;
 
 @Service
 public class ServicesLayer {
@@ -90,22 +91,29 @@ public class ServicesLayer {
         return durtn;
     }
 
-    public int getNumberOfPeopleOn(LocalDateTime dateTime, String airportName){
+    public int getNumberOfPeopleOn(Date date, String airportName){
         List<Flight> flights = repo.getAllFlights();
         List<Airport> ports = repo.getAllPorts();
         City city = City.DEF;
         int passngrs = 0;
         for(Airport port: ports ){
-            if(airportName.compareTo(port.getAirportName()) == 0){
+            if(port.getAirportName().equals(airportName)){
                 city = port.getCity();
             }
         }
         System.out.println(city);
 
-        LocalDate date = dateTime.toLocalDate();
         for(Flight flight : flights){
             if( flight.getFromCity() == city || flight.getToCity() == city ){
-                if (date.equals(flight.getFlightDate())) {
+//                if (date.equals(flight.getFlightDate())) {
+//                    System.out.println("Matched Date");
+//                    passngrs += flight.getTicketsBooked();
+//                }
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                String inputDateString = formatter.format(date);
+                String flightDateString = formatter.format(flight.getFlightDate());
+
+                if (inputDateString.equals(flightDateString)) {
                     System.out.println("Matched Date");
                     passngrs += flight.getTicketsBooked();
                 }

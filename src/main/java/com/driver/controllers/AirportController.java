@@ -8,7 +8,7 @@ import com.driver.model.Passenger;
 import com.driver.services.ServicesLayer;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.format.annotation.DateTimeFormat;
-import java.time.LocalDateTime;
+
 
 import java.util.ArrayList;
 import java.time.LocalDateTime;
@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Date;
 
 @RestController
 public class AirportController {
@@ -50,27 +51,28 @@ public class AirportController {
        return duration;
     }
 
-//    @GetMapping("/get-number-of-people-on-airport-on/{date}")
-//    public int getNumberOfPeopleOn(@PathVariable("date") Date date,@RequestParam("airportName")String airportName){
+    @GetMapping("/get-number-of-people-on-airport-on/{date}")
+    public int getNumberOfPeopleOn(@PathVariable("date") Date date,@RequestParam("airportName")String airportName){
+
+        //Calculate the total number of people who have flights on that day on a particular airport
+        //This includes both the people who have come for a flight and who have landed on an airport after their flight
+        int pssngrs = servicesLayer.getNumberOfPeopleOn(date,airportName);
+        return pssngrs;
+    }
+
+//@GetMapping("/get-number-of-people-on-airport-on/{date}")
+//public int getNumberOfPeopleOn(
+//        @PathVariable("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime date,
+//        @RequestParam("airportName") String airportName) {
 //
-//        //Calculate the total number of people who have flights on that day on a particular airport
-//        //This includes both the people who have come for a flight and who have landed on an airport after their flight
-//        int pssngrs = servicesLayer.getNumberOfPeopleOn(date,airportName);
-//        return pssngrs;
-//    }
-@GetMapping("/get-number-of-people-on-airport-on/{date}")
-public int getNumberOfPeopleOn(
-        @PathVariable("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime date,
-        @RequestParam("airportName") String airportName) {
-
-    // Log received parameters for debugging
-//    System.out.println("Received date: " + date);
-//    System.out.println("Received airport name: " + airportName);
-
-    // Call to the service layer
-    int pssngrs = servicesLayer.getNumberOfPeopleOn(date, airportName);
-    return pssngrs;
-}
+//    // Log received parameters for debugging
+////    System.out.println("Received date: " + date);
+////    System.out.println("Received airport name: " + airportName);
+//
+//    // Call to the service layer
+//    int pssngrs = servicesLayer.getNumberOfPeopleOn(date, airportName);
+//    return pssngrs;
+//}
 
     @GetMapping("/calculate-fare")
     public int calculateFlightFare(@RequestParam("flightId")Integer flightId){
