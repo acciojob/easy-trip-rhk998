@@ -13,12 +13,12 @@ public class Passenger {
 
     private int age;
 
+    public Passenger(){
 
+    }
 
-    public Passenger(int passengerId,int ticketId, int ticktsBooked, String email, String name, int age) {
+    public Passenger(int passengerId, String email, String name, int age) {
         this.passengerId = passengerId;
-        this.ticketId = ticketId;
-        this.ticktsBooked = ticktsBooked;
         this.email = email;
         this.name = name;
         this.age = age;
