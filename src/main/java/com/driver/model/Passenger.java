@@ -13,9 +13,7 @@ public class Passenger {
 
     private int age;
 
-    public Passenger() {
 
-    }
 
     public Passenger(int passengerId,int ticketId, int ticktsBooked, String email, String name, int age) {
         this.passengerId = passengerId;

@@ -19,9 +19,7 @@ public class Flight {
 
     private int ticketId;
 
-    public Flight() {
 
-    }
 
     public Flight(int flightId, City fromCity, City toCity, int maxCapacity, int ticketsBooked, int ticketId, LocalDate flightDate, double duration) {
         this.flightId = flightId;

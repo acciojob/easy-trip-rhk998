@@ -64,8 +64,8 @@ public int getNumberOfPeopleOn(
         @RequestParam("airportName") String airportName) {
 
     // Log received parameters for debugging
-    System.out.println("Received date: " + date);
-    System.out.println("Received airport name: " + airportName);
+//    System.out.println("Received date: " + date);
+//    System.out.println("Received airport name: " + airportName);
 
     // Call to the service layer
     int pssngrs = servicesLayer.getNumberOfPeopleOn(date, airportName);
