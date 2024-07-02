@@ -37,10 +37,11 @@ public class ServicesLayer {
         List<Airport> Airportlist = repo.getAllPorts();
         Airport largestAirport = null;
 
-        for (Airport airport : airports) {
+        for (Airport airport : Airportlist) {
             if (largestAirport == null ||
                     airport.getNoOfTerminals() > largestAirport.getNoOfTerminals() ||
-                    (airport.getNoOfTerminals() == largestAirport.getNoOfTerminals() && airport.getAirportName().compareTo(largestAirport.getAirportName()) < 0)) {
+                    (airport.getNoOfTerminals() == largestAirport.getNoOfTerminals() &&
+                            airport.getAirportName().compareTo(largestAirport.getAirportName()) < 0)) {
                 largestAirport = airport;
             }
         }
@@ -97,19 +98,20 @@ public class ServicesLayer {
             if( flight.getFromCity() == city || flight.getToCity() == city ){
                 if (date.equals(flight.getFlightDate())) {
                     System.out.println("Matched Date");
-                    passngrs += flight.getTicketsBooked();
+                    passngrs += flight.getMaxCapacity();
                 }
             }
         }
         return passngrs;
     }
+
     public int calculateFlightFare(int flightId){
         List<Flight> flights = repo.getAllFlights();
 
         int presntFair = 0;
         int filledseats = 0;
         for(Flight flight : flights){
-            filledseats = flight.getTicketsBooked();
+            filledseats = flight.getMaxCapacity();
             if(flight.getFlightId() == flightId){
                 presntFair = 3000 + filledseats*50;
             }
@@ -126,28 +128,22 @@ public class ServicesLayer {
         if(flight==null){
             return "FAILURE";
         }
-        int tickId = flight.getTicketId();
-        int ticktsAvailable = flight.getTicketsBooked();
-        int totatlTickts = flight.getMaxCapacity();
-        if(totatlTickts - ticktsAvailable <=0){
+        int ticktsAvailable = flight.getMaxCapacity();
+        if(ticktsAvailable <=0){
             return "FAILURE";
         }
-        Passenger passenger0 = repo.getPassengerById(passengerId);
-        if(passenger0 == null){
-            Passenger passenger = new Passenger();
-            passenger.setPassengerId(passengerId);
-            passenger.setTicketId(tickId);
-            repo.updatePassenger(passenger);
-        }else{
-            if(passenger0.getTicketId() == -1){
-                System.out.println("passenger renewed");
-                passenger0.setTicketId(tickId);
-            }else if(passenger0.getTicketId() !=-1){
-                return "FAILURE";
-            }
+        Passenger passenger  = repo.getPassengerById(passengerId);
+        if(passenger == null){
+            return "FAILURE";
         }
-        Passenger passengertest = repo.getPassengerById(passengerId);
-        System.out.println(passengertest.getTicketId() + " " + passengertest.getPassengerId());
+
+        List<Integer> passengers = repo.getPassengerList(flightId);
+        if(passengers.contains(passengerId)){
+            return "FAILURE";
+        }else{
+            bookTickets(flightId,passengerId);
+        }
+
         return "SUCCESS";
     }
 
@@ -155,21 +151,15 @@ public class ServicesLayer {
         Flight flight = repo.getFlightById(flightId);
         if(flight==null) return "FAILURE";
         Passenger passenger = repo.getPassengerById(passengerId);
-        if(passenger == null || passenger.getTicketId() == -1) return "FAILURE";
+        if(passenger == null) return "FAILURE";
 
-        passenger.setTicketId(-1);
-        System.out.println(passenger.getTicketId());
+        repo.cancelTicket(flightId,passengerId);
         return "SUCCESS";
     }
 
     public int countOfBookingsDoneByPassenger(int passengerId){
         int bookings = 0;
-        Passenger passenger = repo.getPassengerById(passengerId);
-        if(passenger == null) return -1;
-            if(passenger.getPassengerId() == passengerId){
-                bookings = passenger.getTicktsBooked();
-            }
-          System.out.println(bookings);
+
         return bookings;
     }
 
@@ -180,7 +170,7 @@ public class ServicesLayer {
         }
         int count = 0; int revenue = 0;
 
-        count = flight.getTicketsBooked();
+        count = flight.getMaxCapacity();
 
         revenue = 3000 * count;
         return revenue;

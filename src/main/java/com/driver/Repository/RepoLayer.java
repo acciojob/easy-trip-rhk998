@@ -64,4 +64,24 @@ public class RepoLayer {
     public Passenger getPassengerById(int passengerId) {
         return passngrDb.get(passengerId);
     }
+
+    HashMap<Integer, List<Integer>> ticketList = new HashMap<>();
+    public void bookTickets(int flightId, int passengerId){
+        List<Integer> passengers = new ArrayList<>();
+        passengers.add(passengerId);
+        ticketList.put(flightId, passengers);
+    }
+    public List<Integer> getPassengerList(int flightId){
+        return ticketList.get(flightId);
+    }
+
+    public void cancelTicket(int flightId, int passengerId){
+        for(int flight : ticketList.keySet()){
+            if(flight==flightId){
+                List<Integer> passengers = ticketList.get(flight);
+                passengers.remove(passengerId);
+                ticketList.put(flight,passengers);
+            }
+        }
+    }
 }
