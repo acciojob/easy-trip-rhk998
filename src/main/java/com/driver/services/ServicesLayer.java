@@ -8,33 +8,36 @@ import com.driver.model.Passenger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Date;
 
 @Service
 public class ServicesLayer {
 
-    @Autowired
-    private RepoLayer repo;
+    private final RepoLayer repo;
 
-    public String addPassngr(Passenger passenger){
+    @Autowired
+    public ServicesLayer(RepoLayer repo) {
+        this.repo = repo;
+    }
+
+    public String addPassngr(Passenger passenger) {
         return repo.addPassngr(passenger);
     }
 
-    public String addFlight(Flight flight){
+    public String addFlight(Flight flight) {
         return repo.addFlight(flight);
     }
 
-    public String addPort(Airport airport){
+    public String addPort(Airport airport) {
         return repo.addPort(airport);
     }
 
-    public String getPort(){
-        List<Airport> Airportlist = repo.getAllPorts();
+    public String getPort() {
+        List<Airport> airportList = repo.getAllPorts();
         Airport largestAirport = null;
 
-        for (Airport airport : Airportlist) {
+        for (Airport airport : airportList) {
             if (largestAirport == null ||
                     airport.getNoOfTerminals() > largestAirport.getNoOfTerminals() ||
                     (airport.getNoOfTerminals() == largestAirport.getNoOfTerminals() &&
@@ -46,66 +49,55 @@ public class ServicesLayer {
         return largestAirport != null ? largestAirport.getAirportName() : "No airports available";
     }
 
-    public String getTakeOffCity(int flightId){
-        List<Flight> flightlist = repo.getAllFlights();
-        List<Airport> Airportlist = repo.getAllPorts();
-
-        String takeOffAirport = "";
-        City Default = City.DEF;
-        for(Flight flight : flightlist){
-            if(flight.getFlightId() == flightId){
-                Default = flight.getFromCity();
-            }
-        }
-        for(Airport airport : Airportlist){
-            if(airport.getCity() == Default){
-                takeOffAirport = airport.getAirportName();
-            }
-        }
-        return takeOffAirport;
-    }
-
-    public double getShortestDuration(City fromCity, City toCity){
-        List<Flight> flightlist = repo.getAllFlights();
-        double durtn = Double.MAX_VALUE;
-        boolean flightfound = false;
-        for(Flight flight : flightlist){
-            if ( (flight.getFromCity() == fromCity) && (flight.getToCity() == toCity) ){
-                flightfound = true;
-                durtn =  Math.min(durtn, flight.getDuration());
-            }
-        }
-        if(!flightfound) return -1;
-        return durtn;
-    }
-
-    public int getNumberOfPeopleOn(Date date, String airportName){
-        List<Flight> flights = repo.getAllFlights();
-        List<Airport> ports = repo.getAllPorts();
-        City city = City.DEF;
-        int passngrs = 0;
-        for(Airport port: ports ){
-            if(port.getAirportName().equals(airportName)){
-                city = port.getCity();
-            }
-        }
-        for(Flight flight : flights){
-            if( flight.getFromCity() == city || flight.getToCity() == city ){
-                if (date.equals(flight.getFlightDate())) {
-                    passngrs += flight.getMaxCapacity();
-                }
-            }
-        }
-        return passngrs;
-    }
-
-    public int calculateFlightFare(int flightId){
+    public String getTakeOffCity(int flightId) {
         Flight flight = repo.getFlightById(flightId);
-        if (flight == null) {
-            return 0;
+        if (flight == null) return "Flight not found";
+
+        City fromCity = flight.getFromCity();
+        for (Airport airport : repo.getAllPorts()) {
+            if (airport.getCity() == fromCity) {
+                return airport.getAirportName();
+            }
+        }
+        return "Airport not found";
+    }
+
+    public double getShortestDuration(City fromCity, City toCity) {
+        double duration = Double.MAX_VALUE;
+        boolean flightFound = false;
+        for (Flight flight : repo.getAllFlights()) {
+            if (flight.getFromCity() == fromCity && flight.getToCity() == toCity) {
+                flightFound = true;
+                duration = Math.min(duration, flight.getDuration());
+            }
+        }
+        return flightFound ? duration : -1;
+    }
+
+    public int getNumberOfPeopleOn(Date date, String airportName) {
+        City city = null;
+        for (Airport port : repo.getAllPorts()) {
+            if (port.getAirportName().equals(airportName)) {
+                city = port.getCity();
+                break;
+            }
         }
 
-        int filledSeats = repo.getPassengerList(flightId).size();
+        if (city == null) return 0;
+
+        int passengers = 0;
+        for (Flight flight : repo.getAllFlights()) {
+            if ((flight.getFromCity() == city || flight.getToCity() == city) && date.equals(flight.getFlightDate())) {
+                passengers += repo.getPassengerList(flight.getFlightId()).size();
+            }
+        }
+        return passengers;
+    }
+
+    public int calculateFlightFare(int flightId) {
+        List<Integer> bookedPassengers = repo.getPassengerList(flightId);
+        if (bookedPassengers == null) return 0;
+        int filledSeats = bookedPassengers.size();
         return 3000 + filledSeats * 50;
     }
 
@@ -115,12 +107,8 @@ public class ServicesLayer {
             return "FAILURE";
         }
 
-        List<Integer> bookedPassengers = repo.getPassengerList(flightId);
-        if (bookedPassengers == null) {
-            bookedPassengers = new ArrayList<>();
-        }
-
         int ticketsAvailable = flight.getMaxCapacity();
+        List<Integer> bookedPassengers = repo.getPassengerList(flightId);
 
         if (bookedPassengers.size() >= ticketsAvailable) {
             return "FAILURE";
@@ -134,7 +122,6 @@ public class ServicesLayer {
         if (bookedPassengers.contains(passengerId)) {
             return "FAILURE";
         } else {
-            bookedPassengers.add(passengerId);
             repo.bookTickets(flightId, passengerId);
         }
 
@@ -149,7 +136,7 @@ public class ServicesLayer {
         if (passenger == null) return "FAILURE";
 
         List<Integer> bookedPassengers = repo.getPassengerList(flightId);
-        if (bookedPassengers == null || !bookedPassengers.contains(passengerId)) {
+        if (!bookedPassengers.contains(passengerId)) {
             return "FAILURE";
         }
 
@@ -159,18 +146,18 @@ public class ServicesLayer {
 
     public int countOfBookingsDoneByPassenger(int passengerId) {
         List<Integer> bookedFlights = repo.getBookedFlightsByPassenger(passengerId);
-        return bookedFlights != null ? bookedFlights.size() : 0;
+        return bookedFlights.size();
     }
 
-    public int calculateRevenueOfAFlight(int flightId){
+    public int calculateRevenueOfAFlight(int flightId) {
         Flight flight = repo.getFlightById(flightId);
-        if(flight==null){
+        if (flight == null) {
             return -1;
         }
 
         List<Integer> bookedPassengers = repo.getPassengerList(flightId);
-        int count = bookedPassengers != null ? bookedPassengers.size() : 0;
-
-        return 3000 * count + (count * (count + 1) / 2) * 50;
+        int count = bookedPassengers.size();
+        int revenue = 3000 + (count - 1) * 50;
+        return revenue;
     }
 }
