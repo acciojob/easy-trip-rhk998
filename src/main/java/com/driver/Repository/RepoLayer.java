@@ -6,6 +6,7 @@ import com.driver.model.Passenger;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 
@@ -83,5 +84,15 @@ public class RepoLayer {
                 ticketList.put(flight,passengers);
             }
         }
+    }
+
+    public List<Integer> getBookedFlightsByPassenger(int passengerId) {
+        List<Integer> bookedFlights = new ArrayList<>();
+        for (Map.Entry<Integer, List<Integer>> entry : ticketList.entrySet()) {
+            if (entry.getValue().contains(passengerId)) {
+                bookedFlights.add(entry.getKey());
+            }
+        }
+        return bookedFlights;
     }
 }

@@ -168,10 +168,9 @@ public class ServicesLayer {
         return "SUCCESS";
     }
 
-    public int countOfBookingsDoneByPassenger(int passengerId){
-        int bookings = 0;
-
-        return bookings;
+    public int countOfBookingsDoneByPassenger(int passengerId) {
+        List<Integer> bookedFlights = repo.getBookedFlightsByPassenger(passengerId);
+        return bookedFlights.size();
     }
 
     public int calculateRevenueOfAFlight(int flightId){
