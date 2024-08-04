@@ -123,37 +123,48 @@ public class ServicesLayer {
     //return a String "FAILURE"
     //Also if the passenger has already booked a flight then also return "FAILURE".
 
-    public String bookTickets(int flightId, int passengerId){
+    public String bookTickets(int flightId, int passengerId) {
         Flight flight = repo.getFlightById(flightId);
-        if(flight==null){
-            return "FAILURE";
-        }
-        int ticktsAvailable = flight.getMaxCapacity();
-        if(ticktsAvailable <=0){
-            return "FAILURE";
-        }
-        Passenger passenger  = repo.getPassengerById(passengerId);
-        if(passenger == null){
+        if (flight == null) {
             return "FAILURE";
         }
 
-        List<Integer> passengers = repo.getPassengerList(flightId);
-        if(passengers.contains(passengerId)){
+        int ticketsAvailable = flight.getMaxCapacity();
+        List<Integer> bookedPassengers = repo.getPassengerList(flightId);
+
+        // Check available tickets
+        if (bookedPassengers.size() >= ticketsAvailable) {
             return "FAILURE";
-        }else{
-            bookTickets(flightId,passengerId);
+        }
+
+        Passenger passenger = repo.getPassengerById(passengerId);
+        if (passenger == null) {
+            return "FAILURE";
+        }
+
+        // Check if the passenger has already booked the ticket
+        if (bookedPassengers.contains(passengerId)) {
+            return "FAILURE";
+        } else {
+            repo.bookTickets(flightId, passengerId);
         }
 
         return "SUCCESS";
     }
 
-    public String cancelATicket(int flightId, int passengerId){
+    public String cancelATicket(int flightId, int passengerId) {
         Flight flight = repo.getFlightById(flightId);
-        if(flight==null) return "FAILURE";
-        Passenger passenger = repo.getPassengerById(passengerId);
-        if(passenger == null) return "FAILURE";
+        if (flight == null) return "FAILURE";
 
-        repo.cancelTicket(flightId,passengerId);
+        Passenger passenger = repo.getPassengerById(passengerId);
+        if (passenger == null) return "FAILURE";
+
+        List<Integer> bookedPassengers = repo.getPassengerList(flightId);
+        if (!bookedPassengers.contains(passengerId)) {
+            return "FAILURE";
+        }
+
+        repo.cancelTicket(flightId, passengerId);
         return "SUCCESS";
     }
 
