@@ -6,82 +6,77 @@ import com.driver.model.Passenger;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class RepoLayer {
-    HashMap<Integer,Passenger> passngrDb = new HashMap<>();
-    public String addPassngr(Passenger passenger){
+    private final HashMap<Integer, Passenger> passngrDb = new HashMap<>();
+    private final HashMap<Integer, Flight> flightDb = new HashMap<>();
+    private final HashMap<String, Airport> airportDb = new HashMap<>();
+    private final HashMap<Integer, List<Integer>> ticketList = new HashMap<>();
+
+    public String addPassngr(Passenger passenger) {
         int passngrID = passenger.getPassengerId();
-        passngrDb.put(passngrID,passenger);
+        passngrDb.put(passngrID, passenger);
         return "SUCCESS";
     }
 
-    HashMap<Integer, Flight> flightDb = new HashMap<>();
-    public String addFlight(Flight flight){
+    public String addFlight(Flight flight) {
         int flightID = flight.getFlightId();
-        flightDb.put(flightID,flight);
+        flightDb.put(flightID, flight);
         return "SUCCESS";
     }
 
-    HashMap<String, Airport> airportDb = new HashMap<>();
-    public String addPort(Airport airport){
+    public String addPort(Airport airport) {
         String key = airport.getAirportName();
-        airportDb.put(key,airport);
+        airportDb.put(key, airport);
         return "SUCCESS";
-
     }
 
-    public List<Airport> getAllPorts(){
-        List<Airport> portlist = new ArrayList<>();
-        for(Airport airport : airportDb.values()){
-            portlist.add(airport);
-        }
-        return portlist;
+    public List<Airport> getAllPorts() {
+        return new ArrayList<>(airportDb.values());
     }
-    public List<Flight> getAllFlights(){
-        List<Flight> flightlist = new ArrayList<>();
-        for(Flight flight : flightDb.values()){
-            flightlist.add(flight);
-        }
-        return flightlist;
+
+    public List<Flight> getAllFlights() {
+        return new ArrayList<>(flightDb.values());
     }
+
     public Flight getFlightById(int flightId) {
         return flightDb.get(flightId);
     }
-    public List<Passenger> getAllPassengers(){
-        List<Passenger> passengerList = new ArrayList<>();
-        for(Passenger passenger : passngrDb.values()){
-            passengerList.add(passenger);
-        }
-        return passengerList;
+
+    public List<Passenger> getAllPassengers() {
+        return new ArrayList<>(passngrDb.values());
     }
 
     public void updatePassenger(Passenger passenger) {
         passngrDb.put(passenger.getPassengerId(), passenger);
     }
+
     public Passenger getPassengerById(int passengerId) {
         return passngrDb.get(passengerId);
     }
 
-    HashMap<Integer, List<Integer>> ticketList = new HashMap<>();
-    public void bookTickets(int flightId, int passengerId){
-        List<Integer> passengers = new ArrayList<>();
+    public void bookTickets(int flightId, int passengerId) {
+        List<Integer> passengers = ticketList.getOrDefault(flightId, new ArrayList<>());
         passengers.add(passengerId);
         ticketList.put(flightId, passengers);
     }
-    public List<Integer> getPassengerList(int flightId){
-        return ticketList.get(flightId);
+
+    public List<Integer> getPassengerList(int flightId) {
+        return ticketList.getOrDefault(flightId, new ArrayList<>());
     }
 
-    public void cancelTicket(int flightId, int passengerId){
-        for(int flight : ticketList.keySet()){
-            if(flight==flightId){
-                List<Integer> passengers = ticketList.get(flight);
-                passengers.remove(passengerId);
-                ticketList.put(flight,passengers);
+    public void cancelTicket(int flightId, int passengerId) {
+        List<Integer> passengers = ticketList.get(flightId);
+        if (passengers != null) {
+            passengers.remove(Integer.valueOf(passengerId));
+            if (passengers.isEmpty()) {
+                ticketList.remove(flightId);
+            } else {
+                ticketList.put(flightId, passengers);
             }
         }
     }
