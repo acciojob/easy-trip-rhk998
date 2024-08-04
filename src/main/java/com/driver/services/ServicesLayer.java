@@ -5,20 +5,16 @@ import com.driver.model.Airport;
 import com.driver.model.City;
 import com.driver.model.Flight;
 import com.driver.model.Passenger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Date;
+import java.util.List;
 
-@Service
 public class ServicesLayer {
 
     private final RepoLayer repo;
 
-    @Autowired
-    public ServicesLayer(RepoLayer repo) {
-        this.repo = repo;
+    public ServicesLayer() {
+        this.repo = new RepoLayer(); // Manual instantiation
     }
 
     public String addPassngr(Passenger passenger) {

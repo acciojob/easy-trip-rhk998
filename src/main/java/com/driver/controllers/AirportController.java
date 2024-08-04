@@ -22,7 +22,12 @@ import java.util.Date;
 public class AirportController {
 
     ServicesLayer servicesLayer = new ServicesLayer();
-
+//private final ServicesLayer servicesLayer;
+//
+//    @Autowired
+//    public AirportController(ServicesLayer servicesLayer) {
+//        this.servicesLayer = servicesLayer;
+//    }
     @PostMapping("/add_airport")
     public String addAirport(@RequestBody Airport airport){
 
