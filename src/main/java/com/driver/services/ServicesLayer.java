@@ -47,7 +47,7 @@ public class ServicesLayer {
 
     public String getTakeOffCity(int flightId) {
         Flight flight = repo.getFlightById(flightId);
-        if (flight == null) return "Flight not found";
+        if (flight == null) return null;
 
         City fromCity = flight.getFromCity();
         for (Airport airport : repo.getAllPorts()) {
